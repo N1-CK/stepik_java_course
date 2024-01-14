@@ -1,0 +1,98 @@
+select distinct profession
+FROM professions
+WHERE profession LIKE '%а'
+ORDER BY profession;
+
+SELECT COUNT(*) FROM users WHERE name = 'Андрей' AND age BETWEEN 45 AND 55;
+
+
+SELECT COUNT(*)
+FROM users
+WHERE name IN ('Никита', 'Антон', 'Ольга', 'Елена')
+  AND age < 60;
+
+
+SELECT AVG(age)
+FROM users
+WHERE name = 'Гертруда';
+
+SELECT COUNT(*)
+FROM professions
+WHERE profession IN (
+    SELECT profession
+    FROM professions
+    WHERE profession LIKE '%Биотехнолог%'
+       OR profession LIKE '%Кондитер%'
+);
+
+SELECT COUNT(*)
+FROM users
+WHERE (name LIKE '%э%'
+  OR name LIKE '%Э%')
+  AND age < (
+    SELECT AVG(age)
+    FROM users
+    WHERE prof_id IN (
+            select id from professions
+            where profession in ('Нефролог', 'Геодезист')
+        )
+);
+
+
+UPDATE users
+SET age = 30
+WHERE age < 30;
+
+SELECT AVG(age)
+FROM users
+WHERE name = 'Архип';
+
+
+UPDATE users
+SET prof_id = 9
+WHERE prof_id = 13
+  AND age BETWEEN 25 AND 45;
+
+SELECT COUNT(*)
+FROM users
+WHERE prof_id = 9
+  AND (name LIKE '%п%')
+-- OR name LIKE '%П%')
+
+SELECT *
+FROM users
+WHERE prof_id = 9
+--   AND age BETWEEN 25 AND 45
+  AND (name LIKE '%п%' OR name LIKE '%П%')
+
+SELECT sum(age)
+FROM users
+WHERE mod(id, 2) = 1
+AND leftstr(name, 1) <> 'Г'
+and rightstr(name, 1) = 'а';
+
+
+with asldla as (SELECT *
+FROM users
+WHERE mod(id, 2) = 1)
+
+
+
+DELETE FROM users WHERE id % 2 = 0
+
+SELECT sum(age)
+FROM users t
+WHERE id % 2 = 1 and name not like 'Г%' and name like '%а'
+
+SELECT *, id % 2
+FROM users t
+-- WHERE id % 2 = 1
+--   and lower(name) not like 'г%'
+--   and name like '%а'
+
+
+SELECT sum(age)
+FROM users
+WHERE mod(id, 2) = 1
+  AND leftstr(name, 1) <> 'Г'
+  and rightstr(name, 1) = 'а';

@@ -1,0 +1,60 @@
+import java.sql.*;
+import java.util.Scanner;
+
+public class Library {
+    public static void main(String... args) {
+        Library library = new Library();
+        library.open();
+        library.insert();
+        library.close();
+    }
+
+    Connection connection;
+    void open(){
+        try{
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Алина\\Desktop\\SQLite\\library.db");
+            System.out.println("Connected");
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    void insert(){
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Enter book title: ");
+            String bookName = sc.nextLine();
+            System.out.print("Enter the year of production: ");
+            int year = sc.nextInt();
+            System.out.print("Enter the author's name : ");
+            sc.nextLine();
+            String authorName = sc.nextLine();
+
+            //Запрос на имя и телефон
+            String query =
+                    "INSERT INTO library (nameBook, year, nameAuthor) " +
+                            "VALUES('" + bookName + "', '" + year + "', '"+ authorName + "')";
+
+            //Мы делаем как раз запрос в базу данных, уже обращаясь к нему на прямую
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query);
+
+            //Чтобы узнать, что всё сохранилось в базе
+            System.out.println("Rows added");
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+    void close(){
+        try {
+            connection.close();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+}

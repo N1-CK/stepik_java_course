@@ -1,0 +1,24 @@
+//СОЗДАНИЕ ТАБЛИЦЫ ДЛЯ БД С КНИГАМИ
+sqlite> .open library.db
+sqlite> CREATE TABLE library (
+   ...> id INTEGER PRIMARY KEY AUTOINCREMENT,
+   ...> NAMEBOOK VARCHAR(50),
+   ...> YEAR INTEGER(50),
+   ...> NAMEAUTHOR VARCHAR(50));
+   
+   //ПРОВЕРКА ЧТО ВСЁ РАБОТАЕ, КОМАНДА, КОТОРУЮ НУЖНО ПРОПИСАТЬ 
+   sqlite> .table
+library //ЗНАЧИТ ВСЁ РАБОТАЕТ
+
+
+//КАК ДОБАВИТЬ В бд ЧЕРЕЗ КОНСОЛЬ
+sqlite> INSERT INTO library (nameBook, year, nameAuthor)
+   ...> VALUES ('The Witcher', 1993,'Anjey Sapkovsky');
+   
+   
+ //ПРОВЕРКА, ЧТО ДОБАВЛЕНО
+ sqlite> SELECT * FROM library;
+ 
+ //ЕСЛИ НУЖНО ЧТО-ТО УДАЛИТЬ 
+ sqlite> DELETE FROM library
+   ...> WHERE YEAR = 1993;

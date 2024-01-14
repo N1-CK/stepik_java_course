@@ -1,0 +1,104 @@
+public static void main(String... args) throws SQLException {
+        Cats cats = new Cats();
+        cats.open();
+
+        cats.getCatId(111);
+        cats.getCatId(88);
+        cats.getCatWhere();
+        cats.selectCats();
+        cats.close();
+    }
+    
+    private void getCatId(int id){
+        try {
+            Statement statement = connection.createStatement();
+
+            System.out.println(statement.executeQuery("SELECT * FROM cats WHERE id = " + id).getString("name"));
+
+            System.out.println("Вот ваш котик!");
+            statement.close();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void getCatWhere() {
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Введите цифру(1 или 2), по какому принципу вы хотите отбирать по id < введённым вами числом, или type LIKE '%а': ");
+            int number = sc.nextInt();
+
+            switch (number) {
+                case (1) -> {
+                    System.out.print("Введите до какого кота выводить: ");
+                    int id = sc.nextInt();
+
+                    String query = "SELECT * FROM cats WHERE id <= " + id;
+
+                    Statement statement = connection.createStatement();
+                    ResultSet resultSet = statement.executeQuery(query);
+
+                    while (resultSet.next()) {
+                        id = resultSet.getInt("id");
+                        String name = resultSet.getString("name");
+                        int age = resultSet.getInt("age");
+                        int weight = resultSet.getInt("weight");
+                        System.out.println(id + "\t|" + name + "\t|" + age + "\t|" + weight);
+                    }
+
+                    statement.executeUpdate(query);
+                    System.out.println("Список выведен!");
+                    resultSet.close();
+                    statement.close();
+                }
+                case (2) -> {
+                    System.out.print("Введите русскую букву по какому принципу выводить котиков: ");
+                    sc.nextLine();
+                    String charRush = sc.nextLine();
+
+                    String query = "SELECT id, type FROM types WHERE type LIKE '%" + charRush + "'";
+
+                    Statement statement = connection.createStatement();
+                    ResultSet resultSet = statement.executeQuery(query);
+
+                    while (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        String type = resultSet.getString("type");
+                        System.out.println(id + "\t|" + type);
+                    }
+
+                    statement.executeUpdate(query);
+                    System.out.println("Список выведен!");
+                    resultSet.close();
+                    statement.close();
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    private void selectCats() {
+        //select() это и есть get_all_types(), вывод всех котов, которые есть у меня в базе
+        try {
+            //обращение к БД
+            Statement statement = connection.createStatement();
+            String query = "SELECT *" +
+                    " FROM cats " +
+                    "ORDER BY id";
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int age = resultSet.getInt("age");
+                int weight = resultSet.getInt("weight");
+                System.out.println(id + "\t|" + name + "\t|" + age + "\t|" + weight);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    

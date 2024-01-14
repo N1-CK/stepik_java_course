@@ -1,0 +1,90 @@
+//Создала таблицу в консольке и дальше работала в Java проверила, что всё появилось
+sqlite> CREATE TABLE types (
+   ...> id INTEGER PRIMARY KEY AUTOINCREMENT,
+   ...> type VARCHAR(100));
+   
+   
+   import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class Cats {
+    public static void main(String... args) {
+        Cats cats = new Cats();
+        cats.open();
+        cats.insert();
+        cats.select();
+        cats.close();
+    }
+
+    Connection connection;
+
+    private void open() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Алина\\Desktop\\SQLite\\My_cats.db");
+            System.out.println("Connected");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void insert() {
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Enter type cat: ");
+            String type = sc.nextLine();
+
+            String query =
+                    "INSERT INTO types (type) " +
+                            "VALUES('" + type + "')";
+
+            //Мы делаем как раз запрос в базу данных, уже обращаясь к нему на прямую
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query);
+
+            //Чтобы узнать, что всё сохранилось в базе
+            System.out.println("Rows added");
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private void select() {
+        try {
+            //обращение к БД
+            Statement statement = connection.createStatement();
+            String query = "SELECT id, type" +
+                    " FROM types " +
+                    "ORDER BY type";
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String type = resultSet.getString("type");
+                System.out.println(id + "\t|" + type);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void close() {
+        try {
+            connection.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}

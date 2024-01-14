@@ -1,0 +1,104 @@
+public static void main(String... args) throws SQLException {
+        Cats cats = new Cats();
+        cats.open();
+
+        //cats.insert();
+        //cats.deleteType();
+        //cats.updateType();
+        //cats.getType();
+        //cats.getTypeWhere();
+        //cats.newTableCats();
+        //cats.insertCat("Барсик", "Подзаборный", 11, 2.3);
+        //cats.insertCat("Мурзик", "Лесной", 3, 3.5);
+        //cats.insertCat("Тузик", "Турецкий ван", 7, 1.5);
+
+        cats.addMoreCats(cats.names.length);
+        cats.selectCats();
+        cats.select();
+        cats.close();
+    }
+    
+    String[] names = new String[]{
+            "Гарфилд","Том","Гудвин","Рокки","Ленивец",
+            "Пушок","Спорти","Бегемот","Пират","Гудини",
+            "Зорро","Саймон","Альбус","Базилио","Леопольд",
+            "Нарцисс","Атос","Каспер","Валлито","Оксфорд",
+            "Бисквит","Соня","Клеопатра","Цунами","Забияка",
+            "Матильда","Кнопка","Масяня","Царапка","Серсея",
+            "Ворсинка","Амели","Наоми","Маркиза","Изольда",
+            "Вальс","Несквик","Златан","Баскет","Изюм","Цукат",
+            "Мокко","Месси","Кокос","Адидас","Бейлиз","Тайгер",
+            "Зефир","Мохи","Валенсия","Баунти","Свити","Текила",
+            "Ириска","Карамель","Виски","Кукуруза","Гренка",
+            "Фасолька","Льдинка","Китана","Офелия","Дайкири",
+            "Брусника","Аватар","Космос","Призрак","Изумруд",
+            "Плинтус","Яндекс","Крисмас","Метеор","Оптимус","Смайлик",
+            "Цельсий","Краска","Дейзи","Пенка","Веста","Астра","Эйприл",
+            "Среда","Бусинка","Гайка","Елка","Золушка","Мята","Радость",
+            "Сиам","Оскар","Феликс","Гарри","Байрон","Чарли","Симба","Тао",
+            "Абу","Ватсон","Енисей","Измир","Кайзер","Васаби","Байкал",
+            "Багира","Айрис","Диана","Мими","Сакура","Индия","Тиффани",
+            "Скарлетт","Пикси","Лиззи","Алиса","Лило","Ямайка","Пэрис","Мальта","Аляска"
+    };
+    
+    private void addMoreCats(int n){
+        try {
+            for (int i = 0; i < n; i++) {
+                insertCat(names[(int) ((names.length - 1) * Math.random())], types[(int) ((types.length - 1) * Math.random())],  (int) (25 * Math.random()), 17 * Math.random());
+            }
+            System.out.println("Количество добавленных котиков: " + n);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    
+    private void insertCat(String name, String type, int age, Double weight) {
+        try {
+            // тип кошки
+            ResultSet resultSet = getType("type = '" + type + "'");
+            int id;
+            if (resultSet.isBeforeFirst()) //если находится такой тип, то берём его id
+                id = resultSet.getInt("id");
+            else { //если нет такого типа, то создаём новый и берём
+                insert(type);
+                id = getType("type = '" + type + "'").getInt("id");
+            }
+            Statement statement = connection.createStatement();
+            statement.execute("INSERT INTO 'cats' ('name','type_id','age','weight') " +
+                    "VALUES ('" + name + "'," + id + "," + age + "," + weight + ")");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    private ResultSet getType(String type) throws SQLException {
+        Statement statement = connection.createStatement();
+        String query = "SELECT id, type FROM types WHERE " + type;
+        return statement.executeQuery(query);
+    }
+    
+    
+    private void selectCats() {
+        //select() это и есть get_all_types(), вывод всех котов, которые есть у меня в базе
+        try {
+            //обращение к БД
+            Statement statement = connection.createStatement();
+            String query = "SELECT *" +
+                    " FROM cats " +
+                    "ORDER BY id";
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int age = resultSet.getInt("age");
+                int weight = resultSet.getInt("weight");
+                System.out.println(id + "\t|" + name + "\t|" + age + "\t|" + weight);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }

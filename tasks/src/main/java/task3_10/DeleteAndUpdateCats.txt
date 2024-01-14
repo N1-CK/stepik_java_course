@@ -1,0 +1,84 @@
+public static void main(String... args) throws SQLException {
+        Cats cats = new Cats();
+        cats.open();
+
+        cats.deleteCat(122);
+        cats.deleteCat(121);
+        cats.deleteCat();
+        cats.updateCate(118,"Цирилла");
+        cats.selectCats();
+        cats.close();
+    }
+    
+    private void deleteCat(int id) {
+        try {
+            Statement statement = connection.createStatement();
+            String query = "DELETE FROM cats WHERE id = " + id;
+
+            statement.executeUpdate(query);
+
+            System.out.println("Котик " + id + " удалился от вас(");
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    private void deleteCat() {
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Введите цифру(1 или 2), по какому принципу вы хотите удалить по id < введённым вами числом, или type LIKE '%а': ");
+            int number = sc.nextInt();
+
+            switch (number) {
+                case (1) -> {
+                    System.out.print("Введите до какого кота удалить: ");
+                    int id = sc.nextInt();
+
+                    String query = "DELETE FROM cats WHERE id <= " + id;
+
+                    Statement statement = connection.createStatement();
+
+                    statement.executeUpdate(query);
+                    System.out.println("Удалено!");
+
+                    statement.close();
+                }
+                case (2) -> {
+                    System.out.print("Введите русскую букву по какому принципу удалить котиков: ");
+                    sc.nextLine();
+                    String charRush = sc.nextLine();
+
+                    String query = "DELETE FROM cats WHERE name LIKE '%" + charRush + "'";
+
+                    Statement statement = connection.createStatement();
+
+                    statement.executeUpdate(query);
+                    System.out.println("Удалено!");
+
+                    statement.close();
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateCate(int id, String set){
+        try {
+            String query = "UPDATE cats SET name = '" + set + "' WHERE id = " + id;
+
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query);
+
+            System.out.println("Изменено");
+            statement.close();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+public class DeleteAndUpdateCats {
+}
